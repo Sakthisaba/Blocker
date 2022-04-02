@@ -1,54 +1,50 @@
-//SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+//SPDX-Licence-Identifier: MIT
+//SPDX-License-Identifier: UNLICENSED
 
-import "hardhat/console.sol";
+pragma solidity 0.8.13;
 
-/*contract Greeter {
-    string private greeting;
+contract voting{
 
-    constructor(string memory _greeting) {
-        console.log("Deploying a Greeter with greeting:", _greeting);
-        greeting = _greeting;
+    struct cand {
+        uint candid;
+        string candname;
+        uint vcount;
     }
 
-    function greetz() public view returns (string memory) {
-        return greeting;
-    }
+    uint public candscount;   // 0
 
-    function setGreeting(string memory _greeting) public {
-        console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
-        greeting = _greeting;
-    }
-}
-*/// @title A title that should describe the contract/interface
-/// @author The name of the author
-/// @notice Explain to an end user what this does
-/// @dev Explain to a developer any extra details
+    mapping(address => bool) public voters;
 
-///contract Storedb {
-  
-//string   message;
+    mapping(uint => cand) public cands;
 
+    event vevent(
+        uint indexed _cid
+    );
 
-    //function get() public view returns{
-    //  message;  
-    //}
     
-     //function set(string calldata _message){
-     //  message=  _message;
-  //  }
-    
-//}*/
 
-contract Storage {
-   string _message ="Smart contract with React";
-   
-   function get() public view returns (string memory){
-       return _message;
-   }
+    constructor(){
+        addcand("DMK");
+        addcand("ADMK");
+    }
 
-   function set(string memory message) public{
-    _message = message;    
-   }
+    function addcand(string memory _name)public {
+        candscount++;
+        cands[candscount]=cand(candscount,_name,0);
+    }
 
+    function castevote(uint _cid) public{
+
+        require(!(voters[msg.sender]));
+
+        require(_cid>0 && _cid<=candscount);
+
+        voters[msg.sender]=true;
+
+        cands[_cid].vcount ++;
+
+        emit vevent(_cid);
+
+
+    }
 }
